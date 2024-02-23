@@ -38,8 +38,9 @@ public class StorageServiceImpl implements StorageService {
             BlobId blobId = BlobId.of(bucketName, fileName);
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
             InputStream inputStream = file.getInputStream();
-            storage.create(blobInfo, inputStream);
-            String fileUrl = "https://storage.cloud.google.com/" + bucketName + "/" + fileName;
+            Blob blob = storage.create(blobInfo, inputStream);
+
+            String fileUrl = blob.getMediaLink(); // Переделал хардкод ссылку на более оптимальную
             return ResponseEntity.ok(new StorageResponse(fileUrl));
         } catch (IOException e) {
             throw new IoException("Error uploading file: " + e.getMessage());
